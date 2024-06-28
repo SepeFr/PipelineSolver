@@ -1,0 +1,17 @@
+# Ignore object files and binary files
+*.o
+*.d
+bin/
+obj/
+
+# Ignore build artifacts
+*.out
+*.log
+
+# Ignore backup files
+*~
+
+# Clang Databases and Stuff
+compile_commands.json
+.cache/
+
