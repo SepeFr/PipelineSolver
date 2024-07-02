@@ -1,0 +1,7 @@
+addi 
+addiu 
+andi 
+ori 
+xori 
+slti 
+sltiu 

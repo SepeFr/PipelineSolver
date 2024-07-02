@@ -1,41 +1,91 @@
 #include "parser/fileparser.h"
+#include "parser/instructionloader.h"
+#include "parser/instructionparser.h"
 #include "parser/line.h"
+#include "parser/tokenizer.h"
 #include "pipeline.h"
+#include "util/hashmap.h"
+#include <ctype.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-void printParsedLines(char ***lines) {
+bool isLabel(char *str) {
+  int lenght = strlen(str);
+  bool found = false;
+
+  for (int i = lenght - 1; i >= 0; i--) {
+    if (str[i] == ':') {
+      return true;
+    }
+  }
+  return false;
+}
+
+void solve(char ***lines, HashMap *instructions) {
+  printf("Identifying Instructions!\n");
   for (int i = 0; i < PROGRAM_SIZE; i++) {
     if (lines[i] != NULL) {
-      for (int j = 0; j < 6; j++) {
-        if (lines[i][j] != NULL) {
-          printf("%s ", lines[i][j]);
-        }
+      char *name = lines[i][0];
+      printf("Current Instruction : %s\n", name);
+      if (isLabel(name)) {
+        printf("Skipping Label\n");
+        continue;
       }
+      if (strncmp("syscall", name, strlen("syscall")) == 0) {
+        printf("Skipping Syscall\n");
+        continue;
+      }
+      HashNode *node = getHashMap(instructions, name);
+      while (node != NULL) {
+        if (strncmp(node->element.name, name, strlen(node->element.name)) ==
+            0) {
+          break;
+        }
+        node = node->next;
+      }
+      if (node == NULL) {
+        continue;
+      }
+      printf("Found Instruction %s - His type is ", node->element.name);
+      switch (node->element.type) {
+      case RAritmLog:
+        printf("RAritmLog");
+        break;
+      case IAritmLogA:
+        printf("IAritmLogA");
+        break;
+      case IAritmLogI:
+        printf("IAritmLogI");
+        break;
+      case ILoadSave:
+        printf("ILoadSave");
+        break;
+      case J:
+        printf("Jump");
+        break;
+      }
+      printf(" ");
+      node = node->next;
+
       printf("\n");
     }
   }
 }
 
-void freeParsedLines(char ***lines) {
-  if (lines == NULL)
-    return;
-  for (int i = 0; lines[i] != NULL; i++) {
-    for (int j = 0; lines[i][j] != NULL; j++) {
-      free(lines[i][j]);
-    }
-    free(lines[i]);
-  }
-  free(lines);
-}
-
 void solvePipeline(char *file) {
-  Line buffer[1024];
-  char ***RInstructions = parseFile("res/instR.txt");
+  loadMap();
+  HashMap *instructionMap = loadRArithLog("res/instRAritmLog.txt");
+  loadILoadSave("res/instILoadSave.txt");
+  loadIAritmLogA("res/instIAritmLogA.txt");
+  loadIAritmLogI("res/instIAritmLogI.txt");
+  loadJump("res/Jump.txt");
+
   char ***parsedLines = parseFile(file);
+  printParsedLines(parsedLines);
 
-  printParsedLines(RInstructions);
+  solve(parsedLines, instructionMap);
 
-  freeParsedLines(RInstructions);
   freeParsedLines(parsedLines);
 }

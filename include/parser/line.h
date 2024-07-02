@@ -3,15 +3,20 @@
 
 #define PROGRAM_SIZE 1024
 
+typedef enum type { RAritmLog, IAritmLogA, IAritmLogI, ILoadSave, J } Type;
+
 typedef struct {
-  char type;
-  char *sourceAddress;
-  char *targetAddress;
-  char *destinationAddress;
+  char *name;
+  Type type;
+  char *sourceRegister;
+  char *targetRegister;
+  char *destinationRegister;
   char *immediate;
-  char *shamt;
-  char *funct;
-  char *jumpAddress;
+  char *address;
+  char *label;
 } Line;
+
+void printLine(Line *line);
+void printLineNoNL(Line *line);
 
 #endif // LINE_H

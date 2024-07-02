@@ -1,0 +1,10 @@
+li
+la
+lb
+lbu
+lhu
+lw
+sb
+sh
+sw
+si

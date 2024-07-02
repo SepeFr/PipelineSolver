@@ -7,8 +7,9 @@ BIN_DIR = bin
 TARGET = $(BIN_DIR)/pipelinesolver
 MKDIR_P = mkdir -p
 
-SRCS = $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/parser/*.c)
-OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(patsubst $(SRC_DIR)/parser/%.c, $(OBJ_DIR)/parser/%.o, $(SRCS)))
+# Use find to get all .c files in SRC_DIR and its subdirectories
+SRCS = $(shell find $(SRC_DIR) -name '*.c')
+OBJS = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 DEPS = $(OBJS:.o=.d)
 
 .PHONY: all clean
@@ -22,11 +23,7 @@ $(TARGET): $(OBJS)
 -include $(DEPS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@$(MKDIR_P) $(OBJ_DIR)
-	$(CC) $(CFLAGS) -MMD -MP -c -o $@ $< || { echo 'Compilation failed'; exit 1; }
-
-$(OBJ_DIR)/parser/%.o: $(SRC_DIR)/parser/%.c
-	@$(MKDIR_P) $(OBJ_DIR)/parser
+	@$(MKDIR_P) $(dir $@)
 	$(CC) $(CFLAGS) -MMD -MP -c -o $@ $< || { echo 'Compilation failed'; exit 1; }
 
 clean:

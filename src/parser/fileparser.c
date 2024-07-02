@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define LINE_LENGTH 255
+#define LINE_LENGTH 1024
 
 char *addNewLine(char *str) {
   char *strNewLine;
@@ -16,28 +16,38 @@ char *addNewLine(char *str) {
     strlcpy(strNewLine, str, len + 1);
     strNewLine[len] = '\n';
     strNewLine[len + 1] = '\0';
+  } else {
+    return str;
   }
   return strNewLine;
 }
 
-char *strip(char *lineBuffer) {
-  char *backChar = lineBuffer + strlen(lineBuffer);
+char *strip(char *str) {
+  char *backChar = str + strlen(str);
   while (isspace(*--backChar))
     ;
   *(backChar + 1) = '\0';
 
-  while (isspace(*lineBuffer))
-    lineBuffer++;
+  while (isspace(*str))
+    str++;
 
-  if (addNewLine(lineBuffer) != NULL && strlen(lineBuffer) > 0) {
-    return addNewLine(lineBuffer);
+  if (str == NULL) {
+    return "";
   }
-  return lineBuffer;
+  return str;
+}
+
+int strArrayLen(char **array) {
+  int i = 0;
+  while (*array != NULL) {
+    i++;
+    array++;
+  }
+  return i;
 }
 
 char ***parseFile(const char *filename) {
   FILE *filePointer;
-  char current;
 
   filePointer = fopen(filename, "r");
   if (filePointer == NULL) {
@@ -52,14 +62,18 @@ char ***parseFile(const char *filename) {
 
   while (fgets(lineBuffer, lineBufferLength, filePointer)) {
     lineBuffer = strip(lineBuffer);
+    if (lineBuffer == NULL) {
+      continue;
+    }
     if (strlen(lineBuffer)) {
       char **parsedLine = parseLine(strip(lineBuffer));
-      parsedLines[currentIndex] = parsedLine;
-      currentIndex++;
+      if (parsedLine != NULL && strArrayLen(parsedLine) != 0) {
+        parsedLines[currentIndex] = parsedLine;
+        currentIndex++;
+      }
     }
   }
 
-  free(lineBuffer);
   fclose(filePointer);
   return parsedLines;
 }
