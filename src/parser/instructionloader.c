@@ -1,4 +1,5 @@
-#include "parser/fileparser.h"
+#include "parser/instructionloader.h"
+#include "parser/instructionhelper.h"
 #include "parser/instructionparser.h"
 #include "parser/line.h"
 #include "util/hashmap.h"
@@ -7,11 +8,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-HashMap *map;
+static HashMap *map;
 
-void loadMap() { map = malloc(sizeof(HashMap)); }
+static void loadMap(void) {
+  static HashMap localMap;
 
-HashMap *loadRArithLog(char *filename) {
+  if (map == NULL) {
+    initializeMap(&localMap);
+    map = &localMap;
+  }
+}
+
+HashMap *loadRArithLog(const char *filename) {
+  loadMap();
   FILE *filePointer;
 
   filePointer = fopen(filename, "r");
@@ -20,82 +29,65 @@ HashMap *loadRArithLog(char *filename) {
     return NULL;
   }
 
-  int lineBufferLength = MAX_INST_LEN;
-  char *lineBuffer = malloc(sizeof(char) * lineBufferLength);
-  while (fgets(lineBuffer, lineBufferLength, filePointer)) {
-    lineBuffer = strip(lineBuffer);
-    if (lineBuffer == NULL) {
-      continue;
-    }
-    if (strlen(lineBuffer)) {
+  char lineBuffer[MAX_INST_LEN];
+  while (fgets(lineBuffer, MAX_INST_LEN, filePointer)) {
+    strip(lineBuffer);
+    if (strlen(lineBuffer) != 0) {
+      parseComments(lineBuffer);
       insertHashMap(map, lineBuffer, RAritmLog);
     }
   }
 
-  free(lineBuffer);
   fclose(filePointer);
   return map;
 }
 
-HashMap *loadIAritmLogA(char *filename) {
+HashMap *loadIAritmLogA(const char *filename) {
+  loadMap();
   FILE *filePointer;
 
   filePointer = fopen(filename, "r");
   if (filePointer == NULL) {
-    fclose(filePointer);
     printf("Error: file not found!\n");
     return NULL;
   }
 
-  int lineBufferLength = MAX_INST_LEN;
-  char *lineBuffer = malloc(sizeof(char) * lineBufferLength);
-  while (fgets(lineBuffer, lineBufferLength, filePointer)) {
-    lineBuffer = strip(lineBuffer);
-    if (lineBuffer == NULL) {
-      continue;
-    }
-
+  char lineBuffer[MAX_INST_LEN];
+  while (fgets(lineBuffer, MAX_INST_LEN, filePointer)) {
+    strip(lineBuffer);
     if (strlen(lineBuffer)) {
-      if (*lineBuffer == '#') {
-        continue;
-      }
+      parseComments(lineBuffer);
       insertHashMap(map, lineBuffer, IAritmLogA);
     }
   }
 
-  free(lineBuffer);
   fclose(filePointer);
   return map;
 }
 
-HashMap *loadIAritmLogI(char *filename) {
+HashMap *loadIAritmLogI(const char *filename) {
   FILE *filePointer;
 
   filePointer = fopen(filename, "r");
   if (filePointer == NULL) {
-    fclose(filePointer);
     printf("Error: file not found!\n");
     return NULL;
   }
 
-  int lineBufferLength = MAX_INST_LEN;
-  char *lineBuffer = malloc(sizeof(char) * lineBufferLength);
-  while (fgets(lineBuffer, lineBufferLength, filePointer)) {
-    lineBuffer = strip(lineBuffer);
-    if (lineBuffer == NULL) {
-      continue;
-    }
+  char lineBuffer[MAX_INST_LEN];
+  while (fgets(lineBuffer, MAX_INST_LEN, filePointer)) {
+    strip(lineBuffer);
     if (strlen(lineBuffer)) {
+      parseComments(lineBuffer);
       insertHashMap(map, lineBuffer, IAritmLogI);
     }
   }
 
-  free(lineBuffer);
   fclose(filePointer);
   return map;
 }
 
-HashMap *loadILoadSave(char *filename) {
+HashMap *loadILoadSave(const char *filename) {
   FILE *filePointer;
 
   filePointer = fopen(filename, "r");
@@ -104,46 +96,37 @@ HashMap *loadILoadSave(char *filename) {
     return NULL;
   }
 
-  int lineBufferLength = MAX_INST_LEN;
-  char *lineBuffer = malloc(sizeof(char) * lineBufferLength);
-  while (fgets(lineBuffer, lineBufferLength, filePointer)) {
-    lineBuffer = strip(lineBuffer);
-    if (lineBuffer == NULL) {
-      continue;
-    }
+  char lineBuffer[MAX_INST_LEN];
+  while (fgets(lineBuffer, MAX_INST_LEN, filePointer)) {
+    strip(lineBuffer);
     if (strlen(lineBuffer)) {
+      parseComments(lineBuffer);
       insertHashMap(map, lineBuffer, ILoadSave);
     }
   }
 
-  free(lineBuffer);
   fclose(filePointer);
   return map;
 }
 
-HashMap *loadJump(char *filename) {
+HashMap *loadJump(const char *filename) {
   FILE *filePointer;
 
   filePointer = fopen(filename, "r");
   if (filePointer == NULL) {
-    fclose(filePointer);
     printf("Error: file not found!\n");
     return NULL;
   }
 
-  int lineBufferLength = MAX_INST_LEN;
-  char *lineBuffer = malloc(sizeof(char) * lineBufferLength);
-  while (fgets(lineBuffer, lineBufferLength, filePointer)) {
-    lineBuffer = strip(lineBuffer);
-    if (lineBuffer == NULL) {
-      continue;
-    }
+  char lineBuffer[MAX_INST_LEN];
+  while (fgets(lineBuffer, MAX_INST_LEN, filePointer)) {
+    strip(lineBuffer);
     if (strlen(lineBuffer)) {
+      parseComments(lineBuffer);
       insertHashMap(map, lineBuffer, J);
     }
   }
 
-  free(lineBuffer);
   fclose(filePointer);
   return map;
 }

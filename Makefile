@@ -1,6 +1,52 @@
 # Makefile for PipelineSolver Project
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude
+CC = gcc
+# C noob, need the compiler to baby sit my  ass :)
+CFLAGS = -Wall -Wextra -Wpedantic -Iinclude \
+         -Werror \
+         -Wshadow \
+         -Wconversion \
+         -Wcast-qual \
+         -Wcast-align \
+         -Wwrite-strings \
+         -Wformat=2 \
+         -Wmissing-include-dirs \
+         -Wredundant-decls \
+         -Wswitch-enum \
+         -Wundef \
+         -Wpointer-arith \
+         -Wstrict-prototypes \
+         -Wmissing-prototypes \
+         -Wlogical-op \
+         -Winline \
+         -Wfloat-equal \
+         -Wunreachable-code \
+         -Wformat-nonliteral \
+         -Wshift-overflow=2 \
+         -Wnull-dereference \
+         -Wduplicated-cond \
+         -Wduplicated-branches \
+         -Wrestrict \
+         -Wdouble-promotion \
+         -Wstack-protector \
+         -Wvla \
+         -Woverlength-strings \
+         -fanalyzer \
+         -fstack-protector-strong \
+         -fstack-clash-protection \
+         -Werror=implicit-function-declaration \
+         -Werror=incompatible-pointer-types \
+         -Werror=return-type \
+         -Walloc-zero \
+         -Wsizeof-array-argument \
+         -Walloca \
+         -Wstringop-overflow \
+         -Wstringop-truncation \
+         -fno-common \
+         -fno-omit-frame-pointer \
+         -fno-strict-aliasing \
+         -D_FORTIFY_SOURCE=2 \
+				 -O2
 SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin

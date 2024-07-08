@@ -2,11 +2,10 @@
 #define INSTRUCTIONLOADER_H
 #include "util/hashmap.h"
 
-void loadMap();
-HashMap *loadIAritmLogA(char *filename);
-HashMap *loadIAritmLogI(char *filename);
-HashMap *loadILoadSave(char *filename);
-HashMap *loadRArithLog(char *filename);
-HashMap *loadJump(char *filename);
+HashMap *loadIAritmLogA(const char *filename);
+HashMap *loadIAritmLogI(const char *filename);
+HashMap *loadILoadSave(const char *filename);
+HashMap *loadRArithLog(const char *filename);
+HashMap *loadJump(const char *filename);
 
 #endif // INSTRUCTIONLOADER_H

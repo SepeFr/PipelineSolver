@@ -3,7 +3,8 @@
 
 #define PROGRAM_SIZE 1024
 
-typedef enum type { RAritmLog, IAritmLogA, IAritmLogI, ILoadSave, J } Type;
+// this way i can do if (type), and if not set the value is 0 :9
+typedef enum type { RAritmLog = 1, IAritmLogA, IAritmLogI, ILoadSave, J } Type;
 
 typedef struct {
   char *name;
