@@ -56,7 +56,6 @@ void insertHashMap(HashMap *hashMap, char name[MAX_INST_LEN], Type type) {
     fprintf(stderr, "Error : HashMap bucket is full\n");
     exit(0);
   }
-  free(nameCopy);
 }
 
 HashLL *getHashMap(HashMap *hashMap, char name[MAX_INST_LEN]) {

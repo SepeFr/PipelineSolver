@@ -34,6 +34,7 @@ HashMap *loadRArithLog(const char *filename) {
     strip(lineBuffer);
     if (strlen(lineBuffer) != 0) {
       parseComments(lineBuffer);
+      printf("Inserting RAirthLog into HahsMap %s\n", lineBuffer);
       insertHashMap(map, lineBuffer, RAritmLog);
     }
   }

@@ -2,7 +2,7 @@
 #include "parser/instructionhelper.h"
 #include "parser/instructionparser.h"
 #include "parser/line.h"
-#include "util/hashmap.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,6 +13,16 @@ static void addNewLine(char str[], size_t size) {
     str[len] = '\n';
     str[len + 1] = '\0';
   }
+}
+
+static bool containsData(char str[LINE_LENGTH]) {
+  return str[0] == '.' && str[1] == 'd' && str[2] == 'a' && str[3] == 't' &&
+         str[4] == 'a';
+}
+
+static bool containsText(char str[LINE_LENGTH]) {
+  return str[0] == '.' && str[1] == 't' && str[2] == 'e' && str[3] == 'x' &&
+         str[4] == 't';
 }
 
 int parseFile(const char filename[],
@@ -27,19 +37,28 @@ int parseFile(const char filename[],
 
   char lineBuffer[LINE_LENGTH];
   int currentIndex = 0;
+  bool dataSection = false;
 
   while (fgets(lineBuffer, LINE_LENGTH, filePointer)) {
     char instructions[PROGRAM_SIZE][MAX_INST_LEN] = {0};
     parseComments(lineBuffer);
     strip(lineBuffer);
     if (strlen(lineBuffer)) {
-      addNewLine(lineBuffer, LINE_LENGTH);
-      parseLine(lineBuffer, instructions);
-      if (sizeof(instructions) > 1) {
-        for (int i = 0; i < MAX_INST_LEN; i++) {
-          strlcpy(parsedLines[currentIndex][i], instructions[i], MAX_INST_LEN);
+      if (dataSection == false && containsData(lineBuffer)) {
+        dataSection = true;
+      }
+      if (dataSection) {
+        dataSection = !(containsText(lineBuffer));
+      } else {
+        addNewLine(lineBuffer, LINE_LENGTH);
+        parseLine(lineBuffer, instructions);
+        if (sizeof(instructions) > 1) {
+          for (int i = 0; i < MAX_INST_LEN; i++) {
+            strlcpy(parsedLines[currentIndex][i], instructions[i],
+                    MAX_INST_LEN);
+          }
+          currentIndex++;
         }
-        currentIndex++;
       }
     }
   }

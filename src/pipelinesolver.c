@@ -45,7 +45,7 @@ static void solve(char lines[PROGRAM_SIZE][MAX_INST_COUNT][MAX_INST_LEN],
         printf("Instruction :%s : Node's name not present! Possible hash "
                "collision",
                name);
-        return;
+        break;
       }
       if (strncmp(node->name, name, MAX_INST_LEN) == 0) {
         break;
@@ -80,15 +80,16 @@ static void solve(char lines[PROGRAM_SIZE][MAX_INST_COUNT][MAX_INST_LEN],
 
 void solvePipeline(char *file) {
   HashMap *instructionMap = loadRArithLog("res/instRAritmLog.txt");
-  loadILoadSave("res/instILoadSave.txt");
+  /*loadILoadSave("res/instILoadSave.txt");
   loadIAritmLogA("res/instIAritmLogA.txt");
   loadIAritmLogI("res/instIAritmLogI.txt");
-  loadJump("res/Jump.txt");
+  loadJump("res/Jump.txt");*/
 
   char parsedLines[PROGRAM_SIZE][MAX_INST_COUNT][MAX_INST_LEN] = {0};
   parseFile(file, parsedLines);
-  printParsedLines(parsedLines);
+  // printParsedLines(parsedLines);
 
+  printHashMapAll(instructionMap);
   solve(parsedLines, instructionMap);
   printf("\n");
 }
